@@ -11,76 +11,28 @@
     <script src="https://cdn.jsdelivr.net/npm/showdown/dist/showdown.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg-primary: #f5f4f0;
-            --bg-secondary: #ffffffda;
-            --bg-accent: #1f2a37;
-            --bg-muted: #e2ded7;
-            --text-primary: #1f2933;
-            --text-secondary: #4b5563;
-            --accent-emerald: #4b9c79;
-            --accent-amber: #d1a751;
-            --accent-rose: #d26a5c;
-        }
         body {
             font-family: 'Inter', sans-serif;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
-            background: radial-gradient(circle at top left, rgba(38,60,75,0.15), transparent 45%),
-                        radial-gradient(circle at bottom right, rgba(209,167,81,0.18), transparent 40%),
-                        var(--bg-primary);
-            color: var(--text-primary);
         }
         main {
             flex-grow: 1;
         }
-        .app-shell {
-            backdrop-filter: blur(18px);
-        }
-        .glass-panel {
-            background: var(--bg-secondary);
-            box-shadow: 0 20px 40px rgba(20, 25, 35, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.4);
-        }
         .goal-card {
-            transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease;
-            background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.75));
-            border: 1px solid rgba(31, 42, 55, 0.06);
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            background: white;
+            border: 1px solid #e5e7eb;
         }
         .goal-card:hover {
-            transform: translateY(-8px) scale(1.01);
-            box-shadow: 0 24px 45px rgba(25, 35, 45, 0.14);
-        }
-        .fade-up {
-            opacity: 0;
-            transform: translateY(24px);
-            transition: opacity 0.6s ease, transform 0.6s ease;
-        }
-        .fade-up.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        .filter-chip {
-            border-radius: 9999px;
-            border: 1px solid rgba(75, 156, 121, 0.3);
-            background: rgba(75, 156, 121, 0.08);
-            color: var(--accent-emerald);
-            font-weight: 600;
-            letter-spacing: 0.04em;
-        }
-        .primary-btn {
-            background: linear-gradient(135deg, var(--accent-emerald), #3f7a61);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .primary-btn:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 18px 35px rgba(75, 156, 121, 0.35);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
         ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: rgba(20, 25, 35, 0.05); }
-        ::-webkit-scrollbar-thumb { background: rgba(31, 42, 55, 0.35); border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(31, 42, 55, 0.5); }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #888; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #555; }
         
         .modal-enter { animation: fadeIn 0.3s ease-out; }
         @keyframes fadeIn {
@@ -88,12 +40,12 @@
             to { opacity: 1; transform: scale(1); }
         }
 
-        .ai-content h3 { font-size: 1.125rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid rgba(31, 42, 55, 0.1); }
+        .ai-content h3 { font-size: 1.125rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid #e5e7eb; }
         .ai-content ul { list-style-type: disc; margin-left: 1.5rem; margin-bottom: 1rem; }
         .ai-content li { margin-bottom: 0.5rem; }
-        .ai-content table { width: 100%; border-collapse: collapse; margin-top: 1rem; backdrop-filter: blur(6px); }
-        .ai-content th, .ai-content td { border: 1px solid rgba(31,42,55,0.15); padding: 8px; text-align: left; }
-        .ai-content th { background-color: rgba(75,156,121,0.1); font-weight: 600; }
+        .ai-content table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        .ai-content th, .ai-content td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        .ai-content th { background-color: #f2f2f2; font-weight: 600; }
         
         .year-result-grid {
             display: grid;
@@ -102,214 +54,44 @@
             font-size: 0.75rem;
         }
         .year-result-grid > div {
-            padding: 0.35rem 0.5rem;
-            border-radius: 0.45rem;
-            background: rgba(31, 42, 55, 0.04);
-        }
-        .section-title {
-            letter-spacing: 0.08em;
-            color: var(--text-secondary);
-            text-transform: uppercase;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
         }
     </style>
 </head>
-<body class="text-gray-800">
+<body class="bg-gray-100 text-gray-800">
 
     <!-- Header -->
-    <header class="app-shell sticky top-0 z-30 bg-white/80 border-b border-white/40 backdrop-blur-xl">
-        <div class="container mx-auto px-4 sm:px-6 py-5 flex flex-col xl:flex-row xl:items-center xl:justify-between gap-6">
-            <div class="flex items-start md:items-center gap-4">
-                <div class="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
-                <div class="flex items-center gap-5">
-                    <div class="h-[3.75rem] w-[3.75rem] rounded-2xl overflow-hidden shadow-lg ring-2 ring-white/60 bg-white flex-shrink-0">
-                        <img src="assets/logo-header.png" alt="Prefeitura de Parauapebas" class="h-full w-full object-cover">
-                    </div>
-                    <div>
-                        <p class="uppercase tracking-[0.35em] text-[0.55rem] text-gray-500">Monitoramento Estratégico</p>
-                        <h1 id="header-title" class="text-3xl md:text-[2.35rem] font-semibold text-gray-900 leading-tight">
-                            Painel de Monitoramento
-                        </h1>
-                    </div>
-                </div>
-                <div class="flex flex-wrap items-center gap-3 text-[0.75rem] text-gray-500 font-medium">
-                    <span class="inline-flex items-center gap-2">
-                        <span class="h-1.5 w-8 rounded-full bg-gradient-to-r from-emerald-400 to-emerald-600"></span>
-                        RAG V.01
-                    </span>
-                    <span class="inline-flex items-center gap-2 text-emerald-700">
-                        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zm1 11H9v-2h2v2zm0-4H9V5h2v4z"/></svg>
-                        Painel atualizado em 2025
-                    </span>
-                    <span class="inline-flex items-center gap-2 text-emerald-700">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3a9 9 0 100 18 9 9 0 000-18zm.75 4.5a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm-.75 1.5a.75.75 0 01.75.75v5.25h1.5a.75.75 0 010 1.5h-2.25a.75.75 0 01-.75-.75V9.75a.75.75 0 01.75-.75z"/></svg>
-                        Indicadores oficiais do Plano Municipal de Saúde
-                    </span>
-                </div>
-            </div>
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 md:gap-6">
-  <div class="text-left sm:text-right">
-    <span class="block text-[0.7rem] uppercase tracking-[0.35em] text-gray-600 font-semibold">
-      Instrumento de Gestão do SUS
-    </span>
-    <span class="block text-xl sm:text-2xl font-bold text-emerald-700 leading-tight">
-      Parauapebas — <span class="text-emerald-600 font-semibold">PA</span>
-    </span>
-  </div>
-</div>
-
-                </div>
-                   </button>
-                    <a href="https://drive.google.com/uc?export=download&id=1s7rHeQYqYhZqTiYfHms_UHR5Gs3MAiRT" 
-                       target="_blank" 
-                       rel="noopener noreferrer"
-                       class="primary-btn flex items-center text-white font-semibold py-2.5 px-5 rounded-full shadow-lg text-sm sm:text-base">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
-                        </svg>
-                        Baixar Plano Municipal de Saúde 2022 a 2025
-                    </a>
-                </div>
-            </div>
+   <header class="bg-white shadow-md">
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+        <div class="flex items-center space-x-4">
+            <img src="/assets/logo-parauapebas.png" alt="Logo Prefeitura de Parauapebas" class="h-16 object-contain">
+            <h1 id="header-title" class="text-2xl font-bold text-gray-800">Painel de Monitoramento RAG V.01</h1>
         </div>
-    </header>
+        <div class="flex items-center space-x-6">
+            <div class="flex flex-col items-end space-y-0">
+                <span class="text-sm text-gray-500">Instrumento de Gestão do SUS</span>
+                <span class="text-base text-blue-700 font-semibold leading-tight">Parauapebas-PA</span>
+            </div>
+            <a href="https://drive.google.com/uc?export=download&id=1s7rHeQYqYhZqTiYfHms_UHR5Gs3MAiRT" 
+               target="_blank" 
+               rel="noopener noreferrer"
+               class="flex items-center bg-green-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-green-700 transition-colors duration-200 shadow-sm hover:shadow-md">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+                Baixar Plano Municipal de Saúde 2022 a 2025
+            </a>
+        </div>
+    </div>
+</header>
 
 
     <!-- Main Content -->
-    <main class="container mx-auto px-6 py-10 space-y-12">
-        <section class="glass-panel rounded-3xl p-6 md:p-10 fade-up" data-animate>
-            <header class="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-8">
-                <div>
-                    <p class="section-title text-sm mb-2">Painel Inteligente</p>
-                    <h2 class="text-3xl md:text-4xl font-semibold text-gray-900">Parâmetros de Monitoramento</h2>
-                    <p class="mt-3 max-w-2xl text-base text-gray-600">Explore as metas utilizando filtros dinâmicos para comparar resultados anuais e quadrimestrais. Todos os dados oficiais permanecem íntegros e atualizados.</p>
-                </div>
-                <div class="flex flex-wrap items-center gap-2">
-                    <span class="filter-chip px-4 py-2">Metas Anuais</span>
-                    <span class="filter-chip px-4 py-2">RDQA 1º ao 3º</span>
-                    <span class="filter-chip px-4 py-2">Resultados 2022-2025</span>
-                </div>
-            </header>
-            <div class="grid grid-cols-1 xl:grid-cols-[1.4fr_1fr] gap-6 md:gap-10">
-                <div class="space-y-4">
-                    <div class="relative w-full">
-                        <input type="text" id="search-input" placeholder="Buscar por ID ou palavra-chave..." class="w-full pl-12 pr-4 py-3 rounded-2xl border border-gray-200 bg-white/70 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent shadow-sm">
-                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                            <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                        <div class="rounded-2xl bg-white/70 border border-gray-200 p-4 shadow-sm">
-                            <label for="year-filter" class="text-xs font-semibold uppercase tracking-[0.12em] text-gray-500">Ano para Lista</label>
-                            <select id="year-filter" aria-label="Ano (para lista)" class="mt-2 w-full border-0 bg-transparent focus:outline-none focus:ring-0 text-lg font-medium text-gray-800">
-                                <option value="2024" selected>2024</option>
-                                <option value="2023">2023</option>
-                                <option value="2022">2022</option>
-                                <option value="2025">2025</option>
-                            </select>
-                        </div>
-                        <div class="rounded-2xl bg-white/70 border border-gray-200 p-4 shadow-sm">
-                            <label for="status-filter" class="text-xs font-semibold uppercase tracking-[0.12em] text-gray-500">Status (Gráficos)</label>
-                            <select id="status-filter" aria-label="Status (gráficos)" class="mt-2 w-full border-0 bg-transparent focus:outline-none focus:ring-0 text-lg font-medium text-gray-800">
-                                <option value="todos">Todos</option>
-                                <option value="Alcançada">Alcançada</option>
-                                <option value="Não Alcançada">Não Alcançada</option>
-                                <option value="Outro">Outro (Em Andamento/N/A)</option>
-                            </select>
-                        </div>
-                        <div class="rounded-2xl bg-white/70 border border-gray-200 p-4 shadow-sm">
-                            <label for="diretriz-filter" class="text-xs font-semibold uppercase tracking-[0.12em] text-gray-500">Diretriz</label>
-                            <select id="diretriz-filter" aria-label="Diretriz" class="mt-2 w-full border-0 bg-transparent focus:outline-none focus:ring-0 text-lg font-medium text-gray-800">
-                                <option value="todas">Todas</option>
-                            </select>
-                        </div>
-                        <div class="rounded-2xl bg-white/70 border border-gray-200 p-4 shadow-sm">
-                            <label for="objetivo-filter" class="text-xs font-semibold uppercase tracking-[0.12em] text-gray-500">Objetivo</label>
-                            <select id="objetivo-filter" aria-label="Objetivo" class="mt-2 w-full border-0 bg-transparent focus:outline-none focus:ring-0 text-lg font-medium text-gray-800">
-                                <option value="todos">Todos</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="rounded-3xl bg-emerald-900 text-emerald-100 p-6 md:p-8 shadow-xl relative overflow-hidden">
-                    <div class="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.4),_transparent_55%)]"></div>
-                    <div class="relative">
-                        <h3 class="text-sm uppercase tracking-[0.3em] text-emerald-200">Frequência Analítica</h3>
-                        <p class="mt-4 text-3xl font-semibold">Visão 360º das metas do Plano Municipal de Saúde</p>
-                        <p class="mt-4 text-sm text-emerald-100/80">Filtre por ano, status, diretriz, objetivo e período quadrimestral para comparar desempenhos e identificar gaps de execução.</p>
-                        <div class="mt-6 flex items-center gap-3 text-sm">
-                            <span class="inline-flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-emerald-400"></span> Dados atualizados até 2025</span>
-                        </div>
-                        <div class="mt-8 grid grid-cols-2 gap-4 text-sm">
-                            <div class="bg-white/10 rounded-xl px-4 py-3">
-                                <p class="text-2xl font-semibold">97</p>
-                                <p class="text-emerald-100/70">Metas monitoradas</p>
-                            </div>
-                            <div class="bg-white/10 rounded-xl px-4 py-3">
-                                <p class="text-2xl font-semibold">4</p>
-                                <p class="text-emerald-100/70">Eixos estratégicos</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="mt-6 rounded-2xl bg-white/70 border border-gray-200 p-4 shadow-sm">
-                <label for="quadrimestre-filter" class="text-xs font-semibold uppercase tracking-[0.12em] text-gray-500">Período (Resultados)</label>
-                <select id="quadrimestre-filter" aria-label="Período (resultados)" class="mt-2 w-full border-0 bg-transparent focus:outline-none focus:ring-0 text-lg font-medium text-gray-800">
-                    <option value="anual" selected>Anual</option>
-                    <option value="1">1º RDQA</option>
-                    <option value="2">2º RDQA</option>
-                    <option value="3">3º RDQA</option>
-                </select>
-            </div>
-        </section>
-
-        <!-- Chart Section -->
-        <section class="fade-up" data-animate>
-            <div class="flex flex-col md:flex-row md:items-end md:justify-between mb-6 gap-4">
-                <div>
-                    <p class="section-title text-sm mb-2">Comparativo Anual</p>
-                    <h3 id="chart-title" class="text-3xl font-semibold text-gray-900">Resumo do Desempenho das Metas</h3>
-                    <p class="mt-2 text-gray-600 max-w-3xl">Visualize a evolução anual das metas alcançadas, pendentes e em andamento. Ajuste o status no filtro acima para destacar contextos específicos.</p>
-                </div>
-                <div class="flex items-center gap-2 text-sm text-gray-500">
-                    <span class="inline-flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> Alcançada</span>
-                    <span class="inline-flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-rose-500"></span> Não alcançada</span>
-                    <span class="inline-flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-amber-400"></span> Outros</span>
-                </div>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="charts-grid">
-                <!-- Year charts will be inserted here -->
-            </div>
-        </section>
-
-        <!-- Goals Grid -->
-        <section class="fade-up" data-animate>
-            <div class="flex items-center justify-between mb-6">
-                <div>
-                    <p class="section-title text-sm mb-2">Metas detalhadas</p>
-                    <h2 id="goals-list-title" class="text-3xl font-semibold text-gray-900">Detalhamento das Metas</h2>
-                </div>
-                <button id="export-pdf" class="hidden"></button>
-            </div>
-            <div id="goals-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                <!-- Goal cards will be inserted here by JavaScript -->
-            </div>
-            <div id="no-results" class="hidden text-center py-16">
-                <p class="text-xl text-gray-500">Nenhum resultado encontrado para os filtros selecionados.</p>
-            </div>
-        </section>
-    </main>
-
-    <!-- Modal for Goal Details & AI Analysis -->
-    <div id="goal-modal" class="fixed inset-0 bg-black/40 z-50 hidden flex items-center justify-center p-4">
-        <div id="modal-content-wrapper" class="glass-panel rounded-3xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto modal-enter">
-            <!-- Modal content will be dynamically inserted here -->
-        </div>
-    </div>
-
-    <footer class="mt-auto bg-emerald-950 text-emerald-100/80 py-6 text-center">
-        <p class="uppercase tracking-[0.3em] text-xs">Todos os direitos reservados © 2025 Frank Sinatra da Silva Muniz</p>
-    </footer>
+    <main class="container mx-auto p-6">
+        
+        <!-- Filters -->
+        <div class="bg-white p-4 rounded-lg shadow-sm mb-6 flex flex-col space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                  <div class="relative w-full">
                     <input type="text" id="search-input" placeholder="Buscar por ID ou palavra-chave..." class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
@@ -381,34 +163,9 @@
         </div>
     </div>
 
-    <footer class="mt-auto bg-emerald-950 text-emerald-100/80 py-6 text-center">
-        <p class="uppercase tracking-[0.3em] text-xs">Todos os direitos reservados © 2025 Frank Sinatra da Silva Muniz</p>
+    <footer class="bg-gray-800 text-gray-300 py-4 text-center mt-auto">
+        <p>Todos os direitos reservados © 2025 Frank Sinatra da Silva Muniz</p>
     </footer>
-
-    <script>
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.1 });
-
-        document.querySelectorAll('[data-animate]').forEach((el, index) => {
-            setTimeout(() => observer.observe(el), index * 150);
-        });
-
-        document.querySelectorAll('[data-scroll-target]').forEach((trigger) => {
-            trigger.addEventListener('click', () => {
-                const targetSelector = trigger.getAttribute('data-scroll-target');
-                const target = document.querySelector(targetSelector);
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            });
-        });
-    </script>
 
     <script type="importmap">
 {
@@ -1843,9 +1600,4 @@ declare var jspdf: any; // Declare jspdf global UMD object
     </script>
 </body>
 </html>
-
 ```
-
-
-
-
