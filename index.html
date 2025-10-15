@@ -65,7 +65,8 @@
    <header class="bg-white shadow-md">
     <div class="container mx-auto px-6 py-4 flex justify-between items-center">
         <div class="flex items-center space-x-4">
-            <img src="/logo-parauapebas.png" alt="Logo Prefeitura de Parauapebas" class="h-16 object-contain">
+            <!-- CORREÇÃO: O caminho da imagem foi alterado para o nome do arquivo que você enviou -->
+            <img src="logo-parauapebas.jpg" alt="Logo Prefeitura de Parauapebas" class="h-16 object-contain">
             <h1 id="header-title" class="text-2xl font-bold text-gray-800">Painel de Monitoramento RAG V.01</h1>
         </div>
         <div class="flex items-center space-x-6">
@@ -1124,16 +1125,16 @@ document.addEventListener('DOMContentLoaded', () => {
             **Instruções para a Análise (formato Markdown):**
 
             1.  **Análise Comparativa do Resultado:**
-                *   Compare brevemente o resultado alcançado com o esperado para o período.
-                *   Destaque se o resultado superou, atingiu, atingiu parcialmente ou não atingiu a meta, e a relevância dessa diferença.
+                * Compare brevemente o resultado alcançado com o esperado para o período.
+                * Destaque se o resultado superou, atingiu, atingiu parcialmente ou não atingiu a meta, e a relevância dessa diferença.
 
             2.  **Hipóteses e Fatores Contribuintes (2-3 pontos principais):**
-                *   Levante hipóteses concisas sobre os possíveis fatores que influenciaram o resultado (positivo ou negativo).
-                *   Seja específico(a) se possível, considerando o contexto da saúde pública.
+                * Levante hipóteses concisas sobre os possíveis fatores que influenciaram o resultado (positivo ou negativo).
+                * Seja específico(a) se possível, considerando o contexto da saúde pública.
 
             3.  **Sugestões Estratégicas (2-3 ações concretas):**
-                *   Proponha ações claras, realistas e direcionadas para manter/melhorar o resultado ou para reverter um cenário negativo.
-                *   As ações devem ser focadas e de alto impacto.
+                * Proponha ações claras, realistas e direcionadas para manter/melhorar o resultado ou para reverter um cenário negativo.
+                * As ações devem ser focadas e de alto impacto.
 
             Mantenha a linguagem profissional, clara e direta. Evite generalidades excessivas.
             O resultado deve ser apenas o texto em Markdown.
@@ -1237,10 +1238,10 @@ document.addEventListener('DOMContentLoaded', () => {
             ---
 
             **Instruções para o Plano de Ação:**
-            *   As ações devem ser concretas, mensuráveis (se possível), alcançáveis, relevantes e com prazos definidos.
-            *   Derive as ações das "Sugestões Estratégicas" e "Hipóteses/Problemáticas" da análise.
-            *   Seja específico quanto aos responsáveis e recursos, mesmo que genéricos (ex: "Equipe da Atenção Básica", "Recursos Humanos e Materiais de Escritório").
-            *   Formate a resposta exclusivamente como uma tabela Markdown. Não inclua texto introdutório ou conclusivo fora da tabela.
+            * As ações devem ser concretas, mensuráveis (se possível), alcançáveis, relevantes e com prazos definidos.
+            * Derive as ações das "Sugestões Estratégicas" e "Hipóteses/Problemáticas" da análise.
+            * Seja específico quanto aos responsáveis e recursos, mesmo que genéricos (ex: "Equipe da Atenção Básica", "Recursos Humanos e Materiais de Escritório").
+            * Formate a resposta exclusivamente como uma tabela Markdown. Não inclua texto introdutório ou conclusivo fora da tabela.
         `;
         try {
             const markdownText = await callGeminiAPI(prompt);
@@ -1600,5 +1601,3 @@ declare var jspdf: any; // Declare jspdf global UMD object
     </script>
 </body>
 </html>
-```
-
