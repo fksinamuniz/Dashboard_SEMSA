@@ -747,12 +747,16 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentFilteredData = []; 
     
     // This function reorganizes the original dataset into a more usable structure.
-    function initializeData() {
+    async function initializeData() {
         let allGoals = [];
         let allDiretrizes = new Set();
         let allObjetivos = new Set();
 
         const masterData = {};
+
+        // Load 2025 metas from CSV first
+        const csvMeta2025 = await loadMeta2025FromCsv();
+        Object.assign(meta2025Map, csvMeta2025);
 
         // First, populate the master structure from all years to gather all goals
         for (const year in dataSets) {
@@ -803,15 +807,27 @@ document.addEventListener('DOMContentLoaded', () => {
         
         allGoals = Object.values(masterData);
 
-         // Add placeholder data for 2025
+         // Add placeholder data for 2025, using CSV values when available
         allGoals.forEach(goal => {
             if (!goal.yearly_data["2025"]) {
-                 const finalYearData = goal.yearly_data["2024"] || goal.yearly_data["2023"] || goal.yearly_data["2022"]; 
-                 goal.yearly_data["2025"] = {
-                     esperado: finalYearData?.esperado || "N/A", 
-                     resultado: "S/N",
-                     quadrimestres: { "1": "S/N", "2": "S/N", "3": "S/N" }
-                 };
+                // Priority: CSV value -> last available expected (2024/2023/2022) -> "N/A"
+                let esperado2025 = "N/A";
+                
+                if (meta2025Map[goal.id]) {
+                    // Use value from CSV
+                    esperado2025 = meta2025Map[goal.id];
+                    console.log(`Using CSV meta for goal ${goal.id}: ${esperado2025}`);
+                } else {
+                    // Fallback to last available year's expected value
+                    const finalYearData = goal.yearly_data["2024"] || goal.yearly_data["2023"] || goal.yearly_data["2022"]; 
+                    esperado2025 = finalYearData?.esperado || "N/A";
+                }
+                
+                goal.yearly_data["2025"] = {
+                    esperado: esperado2025,
+                    resultado: "S/N",
+                    quadrimestres: { "1": "S/N", "2": "S/N", "3": "S/N" }
+                };
             }
         });
 
@@ -847,6 +863,87 @@ document.addEventListener('DOMContentLoaded', () => {
             option.title = o; 
             objetivoFilter.appendChild(option);
         });
+    }
+
+    // Map to store 2025 meta values loaded from CSV
+    const meta2025Map = {};
+
+    // Function to load 2025 goals from CSV file
+    async function loadMeta2025FromCsv() {
+        try {
+            const csvUrl = encodeURI('./Série Histórica PMS 2025.csv');
+            const response = await fetch(csvUrl);
+            
+            if (!response.ok) {
+                console.warn(`CSV file not found or not accessible: ${csvUrl}`);
+                return {};
+            }
+            
+            const csvText = await response.text();
+            const lines = csvText.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+            
+            if (lines.length < 2) {
+                console.warn('CSV file is empty or has insufficient data');
+                return {};
+            }
+            
+            // Find header row and locate "Meta 2025" column
+            let headerIndex = -1;
+            let meta2025ColumnIndex = -1;
+            
+            for (let i = 0; i < Math.min(10, lines.length); i++) {
+                const cells = lines[i].split(';');
+                for (let j = 0; j < cells.length; j++) {
+                    const cellValue = cells[j].trim();
+                    if (cellValue.includes('Meta') && cellValue.includes('2025')) {
+                        headerIndex = i;
+                        meta2025ColumnIndex = j;
+                        console.log(`Found "Meta 2025" column at index ${j} in row ${i}`);
+                        break;
+                    }
+                }
+                if (meta2025ColumnIndex >= 0) break;
+            }
+            
+            if (meta2025ColumnIndex < 0) {
+                console.warn('Could not find "Meta 2025" column in CSV');
+                return {};
+            }
+            
+            const map = {};
+            
+            // Process data rows starting after header
+            for (let i = headerIndex + 1; i < lines.length; i++) {
+                const cells = lines[i].split(';');
+                
+                // First cell should be the goal ID
+                const idCell = cells[0]?.trim();
+                if (!idCell || isNaN(parseInt(idCell))) {
+                    continue; // Skip non-data rows
+                }
+                
+                const goalId = parseInt(idCell);
+                
+                // Try to get meta 2025 value from the identified column
+                let meta2025Cell = cells[meta2025ColumnIndex]?.trim() || '';
+                
+                // Handle Brazilian number format (comma as decimal separator)
+                if (meta2025Cell && meta2025Cell !== 'NA' && meta2025Cell !== 'N/A' && meta2025Cell !== '') {
+                    // Convert comma to dot for decimal separator
+                    meta2025Cell = meta2025Cell.replace(',', '.');
+                    map[goalId] = meta2025Cell;
+                    console.log(`Loaded Meta 2025 for goal ${goalId}: ${meta2025Cell}`);
+                }
+            }
+            
+            console.log(`Successfully loaded ${Object.keys(map).length} meta values for 2025 from CSV`);
+            return map;
+            
+        } catch (error) {
+            console.error('Error loading CSV file for 2025 metas:', error);
+            console.warn('Continuing with fallback values for 2025');
+            return {};
+        }
     }
 
     function parseValue(value) {
@@ -1587,8 +1684,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     searchInput.addEventListener('input', filterAndRender); 
     
-    initializeData();
-    filterAndRender(); 
+    // Initialize data asynchronously and render after it's loaded
+    (async () => {
+        await initializeData();
+        renderAllYearCharts(activeData);
+        filterAndRender();
+    })();
 });
 
 /*
